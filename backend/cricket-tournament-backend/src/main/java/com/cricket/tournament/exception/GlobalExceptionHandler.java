@@ -1,5 +1,6 @@
 package com.cricket.tournament.exception;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -40,5 +41,18 @@ public class GlobalExceptionHandler {
                         "error", "Not Found",
                         "message", exception.getMessage()
                 ));
+    }
+    
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(
+            IllegalArgumentException ex) {
+
+        Map<String, String> error = new HashMap<>();
+
+        error.put("status", "409");
+        error.put("error", "Conflict");
+        error.put("message", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }
