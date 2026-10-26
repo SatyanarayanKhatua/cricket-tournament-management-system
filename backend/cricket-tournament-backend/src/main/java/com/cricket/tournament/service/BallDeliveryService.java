@@ -87,9 +87,25 @@ public class BallDeliveryService {
                     "The requested batters do not match the current innings state");
         }
 
-        // Load the bowler.
-        Player bowler = findPlayer(request.getBowlerId());
+     // Load the bowler requested for this delivery.
+     Player bowler = findPlayer(request.getBowlerId());
 
+     // Validate that a bowler has been selected for the current over.
+     Player currentBowler = innings.getCurrentBowler();
+
+     if (currentBowler == null) {
+         throw new ResponseStatusException(
+                 HttpStatus.CONFLICT,
+                 "No bowler has been selected for the current over");
+     }
+
+     // Ensure the requested bowler matches the currently selected bowler.
+     if (!currentBowler.getId().equals(bowler.getId())) {
+         throw new ResponseStatusException(
+                 HttpStatus.CONFLICT,
+                 "The requested bowler does not match the currently selected bowler");
+     }
+     
         // 5. Validate the batting and bowling teams.
         if (striker.getId().equals(nonStriker.getId())) {
             throw new ResponseStatusException(
